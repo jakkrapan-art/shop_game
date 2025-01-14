@@ -23,9 +23,9 @@ public class CharacterFactory : MonoBehaviour
         actionOnGet: character => character.gameObject.SetActive(true),
         actionOnRelease: character => character.gameObject.SetActive(false),
         actionOnDestroy: character => Destroy(character.gameObject),
-        collectionCheck: false, // Disable warnings for too many active objects
-        defaultCapacity: 10,   // Initial capacity
-        maxSize: 50            // Maximum pool size
+        collectionCheck: false,
+        defaultCapacity: 10,
+        maxSize: 50
     );
   }
 
@@ -41,14 +41,12 @@ public class CharacterFactory : MonoBehaviour
           characterPool.Release(character);
           throw new System.Exception("Cannot Create Player more than 1.");
         }
-        // Initialize Player brain
         brain = character.AddComponent<PlayerBrain>();
         playerSpawnCount++;
         Debug.Log("Player character initialized.");
         break;
 
       case CharacterType.NonPlayer:
-        // Initialize NonPlayer brain
         brain = character.AddComponent<NPCBrain>();
         Debug.Log("NonPlayer character initialized.");
         break;
@@ -57,6 +55,7 @@ public class CharacterFactory : MonoBehaviour
     }
 
     brain.Setup(character);
+    character.SetupInteractSystem();
 
     return character;
   }

@@ -3,11 +3,12 @@ using UnityEngine;
 public abstract class CharacterBrain : MonoBehaviour
 {
   [SerializeField]
-  private Character _character;
+  protected Character _character;
 
   public void Setup(Character character)
   {
     _character = character;
+    character.SetBrain(this);
   }
 
   protected virtual void Update()

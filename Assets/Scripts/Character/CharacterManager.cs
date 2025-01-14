@@ -19,6 +19,7 @@ public class CharacterManager : MonoBehaviour
       else if (Input.GetKeyDown(KeyCode.Alpha2))
       {
         character = _factory.CreateCharacter(CharacterFactory.CharacterType.NonPlayer);
+        character.transform.position = new Vector3(character.transform.position.x, -1);
       }
 
       if (character != null)

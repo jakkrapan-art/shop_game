@@ -4,21 +4,30 @@ using UnityEngine;
 
 public class NPCBrain : CharacterBrain
 {
-  private EnumTypes.HoriziontalDirection _currentDirection;
-  private float _lastDirChangeTime = 0;
-  private float _delayChangeDir = 0;
-  private const float MIN_CHANGE_DIR = 1;
-  private const float MAX_CHANGE_DIR = 3;
+  [SerializeField]
+  private GameObject _target;
+
+  public void SetTarget(GameObject target)
+  {
+    _target = target;
+  }
 
   protected override float GetMoveInputValue()
   {
-    if(_lastDirChangeTime + _delayChangeDir < Time.time)
+    if (_target == null || _character.CurrentState == Character.State.Interact) return 0;
+    
+    if (_target.TryGetComponent(out IInteractable interactable) && _character.CanInteract(interactable))
     {
-      _currentDirection = (EnumTypes.HoriziontalDirection)(Random.Range(-1, 2));
-      _delayChangeDir = Random.Range(MIN_CHANGE_DIR, MAX_CHANGE_DIR);
-      _lastDirChangeTime = Time.time;
+      if(_character.CurrentState != Character.State.Interact)
+      {
+        _character.InteractTo(interactable);
+      }
+      return 0;
     }
-
-    return (int) _currentDirection;
+    else
+    {
+      var dir = Mathf.Clamp(Mathf.Round(_target.transform.position.x - transform.position.x), -1, 1);
+      return (int)dir;
+    }
   }
 }
