@@ -47,6 +47,7 @@ public class CharacterFactory : MonoBehaviour
         break;
 
       case CharacterType.NonPlayer:
+        character.transform.position = new Vector3(6, -4);
         brain = character.AddComponent<NPCBrain>();
         Debug.Log("NonPlayer character initialized.");
         break;

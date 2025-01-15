@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,30 +14,33 @@ public class InteractController
     _transform = characterTransform;
   }
 
-  public bool IsCanInteract(Vector2 position, Vector2 targetPos, float characterWidth)
+  public bool IsCanInteract(float positionX, float targetPosX, float characterWidth)
   {
     float maxDistance = _interactRange + (characterWidth * 0.5f);
-    var distance = Vector2.Distance(position, targetPos);
+    var distance = Mathf.Abs(positionX - targetPosX);
     return distance <= maxDistance;
   }
 
-  public void InteractTo(IInteractable target)
+  public void InteractTo(IInteractable target, Action onComplete)
   {
     if (target == null) return;
 
-    if (IsCanInteract(_transform.position, target.GetPosition(), _transform.lossyScale.x)) return;
-
-    var results = target.Interact();
-    foreach (var result in results)
+    if (!IsCanInteract(_transform.position.x, target.GetPosition().x, _transform.lossyScale.x)) return;
+    target.Interact(res =>
     {
-      switch (result)
+      foreach (var result in res)
       {
-        case ReceiveItemResult receive:
-          ExecuteReceiveItem(receive); break;
-        case RemoveItemResult remove:
-          ExecuteRemoveItem(remove); break;
+        switch (result)
+        {
+          case ReceiveItemResult receive:
+            ExecuteReceiveItem(receive); break;
+          case RemoveItemResult remove:
+            ExecuteRemoveItem(remove); break;
+        }
       }
-    }
+
+      onComplete?.Invoke();
+    });
   }
 
   private void ExecuteReceiveItem(ReceiveItemResult receiveRes)
@@ -52,6 +56,6 @@ public class InteractController
 
 public interface IInteractable
 {
-  public IInteractResult[] Interact();
+  public void Interact(Action<IInteractResult[]> onInteractComplete);
   public Vector2 GetPosition();
 }

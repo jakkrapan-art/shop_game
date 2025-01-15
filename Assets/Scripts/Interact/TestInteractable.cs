@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,9 +10,14 @@ public class TestInteractable : MonoBehaviour, IInteractable
     return transform.position;
   }
 
-  public IInteractResult[] Interact()
+  public void Interact(Action<IInteractResult[]> onComplete)
   {
-    IInteractResult[] results = new IInteractResult[2];
-    return results;
+    StartCoroutine(DelayInteract(5, onComplete));
+  }
+
+  private IEnumerator DelayInteract(float second, Action<IInteractResult[]> onComplete) {
+    yield return new WaitForSeconds(second);
+    IInteractResult[] results = new IInteractResult[0];
+    onComplete?.Invoke(results);
   }
 }

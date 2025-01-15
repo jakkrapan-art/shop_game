@@ -45,14 +45,14 @@ public class Character : MonoBehaviour
       return false;
     }
 
-    return InteractController.IsCanInteract(transform.position, target.GetPosition(), transform.lossyScale.x);
+    return InteractController.IsCanInteract(transform.position.x, target.GetPosition().x, transform.lossyScale.x);
   }
 
   public void InteractTo(IInteractable target)
   {
     if (InteractController == null) return;
 
-    InteractController.InteractTo(target);
+    InteractController.InteractTo(target, ()=> CurrentState = State.Idle);
     CurrentState = State.Interact;
   }
   #endregion
